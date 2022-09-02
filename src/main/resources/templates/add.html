@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>添加</title>
+    <link rel="stylesheet" href="layui/css/layui.css"
+          media="all">
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="layui/layui.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+</head>
+<body>
+<br>
+<div class="layui-form layui-form-pane" th:action="@{/createMachine}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">虚拟机名</label>
+        <div class="layui-input-block">
+            <input id="name" type="text" th:text="*{name}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">内存大小</label>
+        <div class="layui-input-inline">
+            <input id="memory" type="number" th:text="*{name}" class="layui-input" min="0" max="2" value="1">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">CPU数</label>
+        <div class="layui-input-block">
+            <input id="cpu" type="number" th:text="*{vcpuNum}" class="layui-input" min="0" max="4" value="1">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">磁盘容量</label>
+        <div class="layui-input-block">
+            <input id="disk" type="number" th:text="*{name}" class="layui-input" min="10" max="1000" step="10" value="10">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">系统</label>
+        <div class="layui-input-block">
+            <select name="ostype" lay-verify="required">
+                <option value=""></option>
+                <option value="CentOS">CentOS</option>
+                <option value="Redhat Server">Redhat Server</option>
+                <option value="Ubuntu">Ubuntu</option>
+                <option value="Ubuntu Server">Ubuntu Server</option>
+                <option value="Windows">Windows</option>
+                <option value="Windows Server">Windows Server</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">用途</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="like[business]" title="商用">
+            <input type="checkbox" name="like[education]" title="教育" checked>
+            <input type="checkbox" name="like[personal]" title="个人">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">立即安装</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="switch" lay-skin="switch">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block" style="text-align: right; padding-right: 30px">
+            <button id="create" type="submit" class="layui-btn" lay-submit lay-filter="formDemo">创建</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            console.log(data);
+            var name = $('#name').val();
+            // var ostype = $('input[checked]').val(); //on
+            var ostype = $(':selected').val();
+            var cpu = $('#cpu').val();
+            var memory = $('#memory').val();
+            var disk = $('#disk').val();
+            console.log(name);
+            // console.log(ostype); //on
+            console.log(ostype);
+            console.log(cpu);
+            console.log(memory);
+            console.log(disk);
+            // layer.msg(JSON.stringify(data.field));
+            // String name, String osType, Integer vcpuNum, Integer memory, Integer diskSize
+            $('#create').text('创建中..');
+            $.post("/createMachine", {
+                name: name,
+                osType: ostype,
+                vcpuNum: cpu,
+                memory: memory,
+                diskSize: disk
+            }, function (data) {
+                console.log(data);
+                if (data) {
+                    console.log('创建成功');
+                    window.parent.layer.closeAll();
+                    window.parent.reloadfunc.call();
+                    $('#create').text('创建');
+                }
+            });
+            return false;
+        });
+    });
+</script>
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+
+        element.progress('demo', '20%');
+        //一些事件监听
+        element.on('tab(demo)', function (data) {
+            console.log(data);
+        });
+    });
+</script>
+</html>

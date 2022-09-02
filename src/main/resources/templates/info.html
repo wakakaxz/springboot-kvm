@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>系统信息</title>
+    <link rel="stylesheet" href="layui/css/layui.css"
+          media="all">
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="layui/layui.js"></script>
+    <script src="echarts/echarts.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+    <style>
+        @font-face {
+            font-family: 'aliregu';
+            src: url('font/Alibaba-PuHuiTi-Regular.ttf');
+            src: url('font/Alibaba-PuHuiTi-Regular.otf') format('truetype'),
+            url('font/Alibaba-PuHuiTi-Regular.eot') format('embedded-opentype'),
+            url('font/Alibaba-PuHuiTi-Regular.woff') format('woff'),
+            url('font/Alibaba-PuHuiTi-Regular.svg') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            font-family: "aliregu", sans-serif;
+        }
+        .processdiv {
+            background-color: #E6E6E6;
+            width: 100%;
+            height: 18px;
+            border-radius: 20px;
+        }
+
+        .processbar {
+            height: 18px;
+            border-radius: 20px;
+            background-color: #26a0da;
+        }
+
+        .processtext {
+            float: right;
+            padding: 1px 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<br>
+<form class="layui-form layui-form-pane" action="" th:object="${machine}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;"  th:value="*{id}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">UUID</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;"  th:value="*{uuid}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">虚拟机名</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;" th:value="*{name}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;" th:value="*{state}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">内存</label>
+        <div class="layui-input-inline">
+            <input type="text" disabled style="cursor: not-allowed;" th:value="*{maxMemory}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">CPU</label>
+        <div class="layui-input-block">
+            <canvas id="graph" style="height: 38px;width: 100%;margin: 0;padding: 0;"></canvas>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">磁盘</label>
+        <div class="layui-input-block">
+            <div style="padding: 10px 5px">
+                <div class="processdiv">
+                    <div id="capaValue" class="processbar" style="width: 0">
+                        <p class="processtext">0%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=" layui-form-item
+                    ">
+        <label class="layui-form-label">IP地址</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;" th:value="*{ip}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">VNC端口</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;" th:value="*{vncPort}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Web端口</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;" th:value="*{webPort}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">MAC地址</label>
+        <div class="layui-input-block">
+            <input type="text" disabled style="cursor: not-allowed;" th:value="*{mac}" class="layui-input">
+        </div>
+    </div>
+</form>
+</body>
+<script>
+    //Demo
+    layui.use(['form', 'element'], function () {
+        var form = layui.form;
+        //进度条
+        var element = layui.element;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+
+
+    var myChart = echarts.init(document.getElementById('graph'));
+    myChart.showLoading();
+    var data = [];
+    var date = [];
+    var now = new Date();
+    // 指定图表的配置项和数据
+    var option = {
+        /*title: {
+            text: 'ECharts 入门示例'
+        },*/
+        tooltip: {},
+        grid: {
+            // show: true,
+            left: '1%',
+            right: '1%',
+            top: '0',
+            bottom: '0'
+        },
+        /*legend: {
+            data:['销量']
+        },*/
+        xAxis: {
+            data: [],
+            show: false
+        },
+        yAxis: {
+            show: false
+        },
+        series: [{
+            itemStyle: {
+                /*color: '#6FBAE1',
+                borderColor: '#6FBAE1'*/
+                opacity: 0
+            },
+            lineStyle: {
+                color: '#6FBAE1'
+            },
+            areaStyle: {
+                color: '#6FBAE1',
+                opacity: 0.6
+            },
+            name: 'CPU',
+            type: 'line',
+            data: data
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    setTimeout(myChart.hideLoading(), 2000);
+
+    var addData = setInterval(function () {
+        now = new Date();
+        date.push([now.getHours(), now.getMinutes(), now.getSeconds()].join('/'));
+        data.push(40 + Math.random() * 30);
+        myChart.setOption({
+            xAxis: {
+                data: date
+            },
+            series: [{
+                name: '销量',
+                type: 'line',
+                data: data
+            }]
+        });
+    }, 1000);
+
+    function update() {
+        clearInterval(addData);
+        setInterval(function () {
+            now = new Date();
+            date.shift();
+            date.push([now.getHours(), now.getMinutes(), now.getSeconds()].join('/'));
+            data.shift();
+            data.push(40 + Math.random() * 30);
+            myChart.setOption({
+                xAxis: {
+                    data: date
+                },
+                series: [{
+                    name: 'CPU',
+                    type: 'line',
+                    data: data
+                }]
+            });
+        }, 1000)
+    }
+
+    setTimeout(update, 1000 * 60 * 2);
+    var capacity = '30%';
+    $('#capaValue').attr('style', 'width: ' + capacity).children('p').text(capacity);
+
+
+</script>
+</html>

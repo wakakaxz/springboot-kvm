@@ -1,0 +1,2 @@
+
+{hostName='xz-vm', url='qemu:///system', hyperVisor='QEMU', virVersion='1003001', cpuType='Core(TM) i7-7700HQ CPU @ 2.80GHz', cpuMhz=2808, cpuNum=4, totalMemory=7953, usedMemory=2868, freeMemory=5085, usedMemoryPercent=36.06409876096946}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>快照</title>
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="layui/layui.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+</head>
+<body>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="recover">恢复</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+
+        table.render({
+            elem: '#test'
+            ,url:'file/snapshot.json'
+            ,title: '快照信息'
+            ,cols: [[
+                {field:'id', title:'ID', hide: true}
+                ,{field:'time', title:'拍摄时间', minWidth:120, maxWidth: 200, fixed: 'left', sort: true}
+                ,{field:'name', title:'快照名', minWidth:80, edit: 'text'}
+                ,{field:'detail', title:'描述', minWidth:150, edit: 'text', templet: function(res){
+                        return '<em>'+ res.detail +'</em>'
+                    }}
+                ,{fixed: 'right', title:'恢复快照', minWidth: 150, maxWidth: 200, align: 'center', toolbar: '#barDemo'}
+            ]]
+            ,page: false
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                console.log(res);
+                return {
+                    "code": res.status, //解析接口状态
+                    "count": res.count, //数据返回的总量
+                    "data": res.snapshots //解析数据列表
+                };
+            }
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if(obj.event === 'recover'){
+                layer.msg("拍摄中");
+                $.get("/recoverSnapshot", {
+                    "id": data.id
+                }, function (result) {
+                    if (result === true) {
+                        layer.msg("拍摄成功");
+                    }else {
+                        layer.mag("拍摄失败");
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

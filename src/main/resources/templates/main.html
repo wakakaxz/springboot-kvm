@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>商品</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css"
+          media="all">
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="layui/layui.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+    <style>
+
+        .backImg {
+            display: block;
+            height: 100%;
+            overflow: hidden;
+            /* 图片居中 */
+            position: absolute;
+            /* 确保显示图片的中间部分 */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -100000;
+        }
+
+        @media only screen and (min-width: 1400px) {
+            .backImg {
+                width: 100%;
+            }
+        }
+
+        .right {
+            position: absolute;
+            float: right;
+        }
+
+        .slide {
+            margin: 10px;
+        }
+
+        .opaAbor {
+            opacity: 0.4;
+            border: 1px solid lightgray;
+        }
+
+        .abso {
+            position: absolute;
+        }
+
+        @font-face {
+            font-family: 'aliregu';
+            src: url('font/Alibaba-PuHuiTi-Regular.ttf');
+            src: url('font/Alibaba-PuHuiTi-Regular.otf') format('truetype'),
+            url('font/Alibaba-PuHuiTi-Regular.eot') format('embedded-opentype'),
+            url('font/Alibaba-PuHuiTi-Regular.woff') format('woff'),
+            url('font/Alibaba-PuHuiTi-Regular.svg') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            font-family: "aliregu", sans-serif;
+        }
+
+        @media only screen and (min-width: 1400px) {
+            .imgCenter {
+                width: 100%;
+                display: block;
+                overflow: hidden;
+                /* 图片居中 */
+                position: absolute;
+                /* 确保显示图片的中间部分 */
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .table {
+            background-color: white;
+            border-color: #f6f6f6;
+            width: 90%;
+            margin-left: 5%;
+            margin-right: 5%;
+            /*border-collapse: collapse;*/
+        }
+
+        tr:hover {
+            transition-duration: 0.3s;
+            transition-delay: 0.1s;
+            background-color: #F2F2F2;
+        }
+
+        .table th {
+            background-color: #F2F2F2;
+        }
+
+        td img {
+            width: 25px;
+        }
+
+        td img:hover {
+            opacity: 0.6;
+            /*width: 30px;*/
+        }
+
+        td {
+            color: #666666;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        .sticky {
+            position: sticky;
+            top: 0; /* 阈值 */
+            z-index: 1000;
+        }
+
+        .header {
+            background-color: #23262E;
+            width: 100%;
+            height: 50px;
+        }
+
+        /*消除body的空白*/
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .info {
+
+        }
+
+        .rotate{
+            animation: loading 3s linear 0s infinite;
+        }
+
+        @keyframes layui-m-anim-loading {
+            0%{
+                transform: rotate(0deg);
+            }
+            50%{
+                transform: rotate(180deg);
+            }
+            100%{
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<img src="images/bg2.png" class="backImg" draggable="false">
+
+<ul class="layui-nav">
+    <li class="layui-nav-item"><p id="welcome">logo</p></li>
+    <li class="layui-nav-item right"><input type="button" class="layui-btn slide" value="退出"
+                                            onclick="quitLogin()"/></li>
+    <li class="layui-nav-item right">
+        <p id="time"></p>
+    </li>
+</ul>
+<table class="layui-hide" id="ptoductTable" lay-filter="products"></table>
+<!--设置工具条-->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="openSelect">批量开启</button>
+        <button class="layui-btn layui-btn-sm" lay-event="closeSelect">批量关闭</button>
+        <button id="addDiv" data-type="auto" class="layui-btn layui-btn-sm" lay-event="add">添加虚拟机</button>
+        <button id="delProduct" class="layui-btn layui-btn-sm" lay-event="delselect">删除选中</button>
+        <button data-type="auto" class="layui-btn layui-btn-sm" lay-event="qemuInfo">宿主机信息</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    {{# console.log(d.state) }}
+    <a lay-event="power"><img src="images/{{d.state}}.png"></a>
+<!--    <a href="/detail/{{d.id}}" class="layui-table-link">{{d.title}}</a>-->
+    <a lay-event="pause"><img src="images/pause.png"></a>
+    <a lay-event="snapshot"><img src="images/clock.png"></a>
+    <!--这里先获取id，点击设置按钮后再从后台获取信息-->
+    <a lay-event="info"><img
+            src="images/info.png"></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a lay-event="terminal"><img src="images/terminal.png"></a>
+</script>
+
+<script>
+    $('#barDemo a').attr('style', 'border-style: none');
+    document.getElementById('welcome').innerText = "Welcome, " + Cookies.get("username") + "!";
+
+    +function time() {
+        //获得显示时间的div
+        timelable = document.getElementById('time');
+        var now = new Date();
+        //替换div内容
+        timelable.innerHTML = now.getFullYear() + "." + (now.getMonth() + 1) + "." + now.getDate() + "    " + now.getHours() + "." + now.getMinutes() + ":" + now.getSeconds();
+        setTimeout(time, 1000);
+    }();
+
+    function quitLogin() {
+        Cookies.remove("username");
+        Cookies.remove("password");
+        location.href = '/login';
+    }
+
+</script>
+<script th:inline="javascript">
+    var reloadfunc;
+    layui.use('element', function () {
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+
+        //监听导航点击
+        element.on('nav(demo)', function (elem) {
+            //console.log(elem)
+            layer.msg(elem.text());
+        });
+    });
+
+    // $('.info').data('method', 'offset').data('type', 'auto');
+    layui.use(['table', 'layer'], function () { //独立版的layer无需执行这一句
+        var layer = layui.layer;
+        var openPanel = {
+            offset: function (othis) {
+                var type = othis.data('type')
+                    , text = othis.text();
+
+                layer.open({
+                    type: 1
+                    , offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    , id: 'layerDemo' + type //防止重复弹出
+                    , content: '<div style="padding: 20px 100px;">' + text + '</div>'
+                    , btn: '关闭全部'
+                    , btnAlign: 'c' //按钮居中
+                    , shade: 0 //不显示遮罩
+                    , yes: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        };
+
+
+        var table = layui.table;
+
+        reloadfunc = function reloadTable() {
+            var searchInput = $('#searchInput');
+            // console.log('qaz');
+            table.reload('tableId', {
+                where: {
+                    key: {
+                        'type': searchInput.val()
+                    }
+                }
+            });
+        };
+
+        //方法级渲染
+        table.render({
+            //表格id
+            elem: '#ptoductTable'
+            , url: '/getMachines'
+            , toolbar: '#toolbarDemo'
+            , cols: [
+                [
+                    {checkbox: true, fixed: true}
+                    , {field: 'id', title: 'ID', fixed: true, hide: true}
+                    , {field: 'name', title: '名称', minWidth: 150, sort: true, fixed: true, edit: true}
+                    , {field: 'state', title: '状态', templet: function (res) {
+                        if (res.state === 'VIR_DOMAIN_RUNNING') {
+                            return '运行中';
+                        }else {
+                            return '已关闭';
+                        }
+                    }}
+                    , {field: 'osType', title: '类型', sort: true}
+                    , {field: 'capacity', title: '容量', sort: true}
+                    , {field: 'ip', title: 'IP地址', minWidth: 180}
+                    , {fixed: 'right', title: '管理', minWidth: 200, maxWidth: 500, align: 'center', toolbar: '#barDemo'}
+                ]
+            ]
+            //重载的时候使用
+            , id: 'tableId'
+            , loading: true
+            , response: {
+                statusCode: 0
+            }
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                console.log(res);
+                return {
+                    "code": res.status, //解析接口状态
+                    "count": res.vmVos.length, //数据返回的总量
+                    "data": res.vmVos //解析数据列表
+                };
+            }
+        });
+
+        var reload = {
+            reload: function () {
+                //执行重载
+                reloadTable();
+            }
+        };
+
+        $('.searchDiv .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            reload[type] ? reload[type].call(this) : '';
+        });
+
+
+        //头工具栏事件
+        //表格filter
+        table.on('toolbar(products)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            console.log("clicked");
+            switch (obj.event) {
+                case 'openSelect':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'closeSelect':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'add':
+                    console.log("qwerqwerqwefas");
+                    layer.open({
+                        type: 2 //此处以iframe举例
+                        , title: '添加'
+                        , area: ['400px', '510px']
+                        , shade: 0
+                        , maxmin: true
+                        , offset: 'auto'
+                        , content: ['/add', 'no']
+
+                        , zIndex: layer.zIndex //重点1
+                        , success: function (layero) {
+                            layer.setTop(layero); //重点2
+                        }
+                    });
+                    break;
+                case 'delSelect':
+                    // layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+                case 'qemuInfo':
+                    layer.open({
+                        type: 2 //此处以iframe举例
+                        , title: '宿主机信息'
+                        , area: ['400px', '600px']
+                        , shade: 0
+                        , maxmin: true
+                        , offset: 'auto'
+                        , content: '/hostInfo'/*['/hostInfo', 'no']*/
+                        , btn: ['确定', '关闭'] //只是为了演示
+                        , yes: function () {
+                            // $(that).click();
+                            layer.closeAll();
+                        }
+                        , btn2: function () {
+                            layer.closeAll();
+                        }
+
+                        , zIndex: layer.zIndex //重点1
+                        , success: function (layero) {
+                            layer.setTop(layero); //重点2
+                        }
+                    });
+                    break;
+            }
+        });
+        //监听工具条
+        table.on('tool(products)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+            if (layEvent === 'del') { //删除
+                layer.confirm('真的要删除么', function (index) {
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    console.log(data.id);
+                    $.post("/delectOne", {"id": data.id}, function () {
+                    });
+                });
+            } else if (layEvent === 'power') {
+
+                if ($(this).children().attr('src') === 'images/VIR_DOMAIN_SHUTOFF.png') {
+                    $(this).children().attr("class", "rotate");
+                    $.get("/startMachine?id=" + data.id, {
+                        "id": data.id
+                    }, function (data) {
+                        if (data === true) {
+                            console.log($(this).children().attr("src"));
+                            console.log($(this));
+                            $(this).children().attr('src', 'images/VIR_DOMAIN_RUNNING.png');
+                            layer.msg("success");
+                            table.reload('tableId', {});
+                        } else {
+                            layer.msg("启动失败");
+                        }
+                    });
+                    // $(this).children().attr('src', 'images/VIR_DOMAIN_RUNNING.png');
+                } else {
+                    $.get("/stopMachine?id=" + data.id, {
+                        "id": data.id
+                    }, function (data) {
+                        if (data === true) {
+                            $(this).children().attr('src', 'images/VIR_DOMAIN_SHUTOFF.png');
+                            layer.msg("success");
+                            table.reload('tableId', {});
+                        } else {
+                            layer.msg("关闭失败");
+                        }
+                    });
+                    // $(this).children().attr('src', 'images/VIR_DOMAIN_SHUTOFF.png');
+                }
+            } else if (layEvent === 'pause') {
+                if (data.state === 'VIR_DOMAIN_RUNNING') {
+                    $.get("/pauseMachine?id=" + data.id, {
+                        "id": data.id
+                    }, function (data) {
+                        if (data === true) {
+                            $(this).children().attr('src', 'images/stop.png');
+                        } else {
+                            layer.msg("暂停失败");
+                        }
+                    });
+                    // $(this).children().attr('src', 'images/VIR_DOMAIN_RUNNING.png');
+                }
+            } else if (layEvent === 'snapshot') {
+                layer.open({
+                    type: 2
+                    , title: '快照信息' //不显示标题栏
+                    , area: ['560px', '366px']
+                    , shade: 0
+                    , id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                    // , btn: ['火速围观', '123']
+                    , closeBth: 2
+                    , scrollbar: true
+                    , btnAlign: 'c'
+                    , moveType: 1 //拖拽模式，0或者1
+                    , content: ['snapshot.html', 'auto']
+                    , success: function (layero) {
+                        var btn = layero.find('.layui-layer-btn');
+                        btn.find('.layui-layer-btn0').attr({
+                            href: 'http://www.layui.com/'
+                            , target: '_blank'
+                        });
+                    }
+                });
+            } else if (layEvent === 'terminal') {
+                window.open('http://192.168.237.143' + ':' + data.webPort + '/vnc.html');
+            } else if (layEvent === 'info') {
+                layer.open({
+                    type: 2 //此处以iframe举例
+                    , title: '系统信息'
+                    , area: ['400px', '700px']/*'auto'['390px', '260px']*/
+                    , shade: 0
+                    , maxmin: true
+                    , offset: 'auto'
+                    , content: ['/getMachineInfo?id=' + obj.data.id, 'no']
+                    , btn: ['确定', '关闭'] //只是为了演示
+                    , yes: function () {
+                        // $(that).click();
+                        layer.closeAll();
+                    }
+                    , btn2: function () {
+                        layer.closeAll();
+                    }
+
+                    , zIndex: layer.zIndex //重点1
+                    , success: function (layero) {
+                        layer.setTop(layero); //重点2
+                    }
+                });
+            }
+
+        });
+
+        //级联删除
+        $('#delProduct').on('click', function () {
+            var checkStatus = table.checkStatus('tableId'); //idTest 即为基础参数 id 对应的值
+            var data = checkStatus.data;
+            for (var i = 0; i < data.length; i++) {
+                // console.log("删除了：" + data[i].id);
+                $.post("/delectOne", {"id": data[i].id}, function () {
+                });
+            }
+            layer.msg('删除完成!', {
+                time: -1
+                , btn: '确定'
+                , btnAlign: 'c'
+                , yes: function () {
+                    reloadTable();
+                    layer.closeAll();
+                }
+            });
+        });
+
+        //编辑商品
+        table.on('edit(products)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            $.post("/updateMachine", {
+                "id": obj.data.id
+                , "name": obj.data.name
+            })
+        });
+
+        //add
+        layui.use(['form', 'layer', 'layedit', 'laydate'], function () {
+            var form = layui.form
+                , layer = layui.layer
+                , $ = layui.jquery;
+
+            //自定义验证规则
+            form.verify({
+                title: function (value) {
+                    if (value === "") {
+                        return '虚拟机名称不能为空';
+                    }
+                }
+                , type: function (value) {
+                    if (value === "") {
+                        return '系统类型不能为空';
+                    } else {
+                    }
+                }
+                , content: function (value) {
+                    // layedit.sync(editIndex);
+                    if (value === "") {
+                        return '内存容量不能为空';
+                    }
+                }
+            });
+
+            //监听提交
+            form.on('submit(addBtn)', function (data) {
+                var name = $('#name').val();
+                var type = $('#type').val();
+                console.log("点击事件完成");
+
+                $.post("/addProduct", {
+                        "name": name,
+                        "type": type
+                    },
+                    function (data) {
+                        layer.msg('正在插入');
+                        console.log("数据插入完成");
+                        console.log(data);
+
+                    });
+                layer.open({
+                    content: '添加成功！'
+                    , btn: '关闭'
+                    , btnAlign: 'c' //按钮居中
+                    , shade: 0 //不显示遮罩
+                    , yes: function () {
+
+                        console.log("正在刷新页面");
+                        layui.use('table', function () {
+                            reloadTable();
+                        });
+
+                        layer.closeAll();
+                    }
+                });
+            });
+        });
+
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+{
+  "status": 0,
+  "products": [
+    {
+      "type": "CentOS",
+      "name": "雪花",
+      "capacity": "8.3G/20G",
+      "ipaddr": "192.168.0.25"
+    },
+    {
+      "type": "Ubuntu Server",
+      "name": "雪碧",
+      "capacity": "3.2G/20G",
+      "ipaddr": "192.168.0.24"
+    },
+    {
+      "type": "CentOS",
+      "name": "威士忌",
+      "capacity": "4.5G/20G",
+      "ipaddr": "192.168.0.23"
+    },
+    {
+      "type": "Redhat Server",
+      "name": "伏特加",
+      "capacity": "6.2G/20G",
+      "ipaddr": "192.168.0.22"
+    },
+    {
+      "type": "Ubuntu",
+      "name": "米酒小汤圆",
+      "capacity": "29.1G/50G",
+      "ipaddr": "192.168.0.21"
+    },
+    {
+      "type": "Redhat Server",
+      "name": "白兰地",
+      "capacity": "15G/20G",
+      "ipaddr": "192.168.0.20"
+    },
+    {
+      "type": "Windows Server",
+      "name": "爆爆珠奶茶",
+      "capacity": "19.1G/100G",
+      "ipaddr": "192.168.0.19"
+    },
+    {
+      "type": "Ubuntu Server",
+      "name": "可乐",
+      "capacity": "7.8G/10G",
+      "ipaddr": "192.168.0.18"
+    },
+    {
+      "type": "CentOS",
+      "name": "果粒橙",
+      "capacity": "4.5G/20G",
+      "ipaddr": "192.168.0.17"
+    },
+    {
+      "type": "CentOS",
+      "name": "青梅绿茶",
+      "capacity": "9.4G/20G",
+      "ipaddr": "192.168.0.16"
+    },
+    {
+      "type": "Ubuntu",
+      "name": "冰糖雪梨",
+      "capacity": "12.6G/50G",
+      "ipaddr": "192.168.0.15"
+    },
+    {
+      "type": "Windows Server",
+      "name": "柠檬水",
+      "capacity": "32.5G/100G",
+      "ipaddr": "192.168.0.14"
+    },
+    {
+      "type": "Ubuntu Server",
+      "name": "茉莉蜜茶",
+      "capacity": "7.8G/20G",
+      "ipaddr": "192.168.0.13"
+    },
+    {
+      "type": "Ubuntu",
+      "name": "冰红茶",
+      "capacity": "13.1G/50G",
+      "ipaddr": "192.168.0.12"
+    },
+    {
+      "type": "Redhat Server",
+      "name": "绿茶",
+      "capacity": "14G/20G",
+      "ipaddr": "192.168.0.11"
+    },
+    {
+      "type": "Redhat Server",
+      "name": "信阳毛尖",
+      "capacity": "15G/20G",
+      "ipaddr": "192.168.0.10"
+    },
+    {
+      "type": "Ubuntu Server",
+      "name": "崂山啤酒",
+      "capacity": "28.9/30G",
+      "ipaddr": "192.168.0.8"
+    },
+    {
+      "type": "Windows Server",
+      "name": "农夫山泉",
+      "capacity": "23.7G/100G",
+      "ipaddr": "192.168.0.9"
+    },
+    {
+      "type": "Ubuntu",
+      "name": "冰露",
+      "capacity": "15.2G/50G",
+      "ipaddr": "192.168.0.7"
+    },
+    {
+      "type": "Windows Server",
+      "name": "阿萨姆",
+      "capacity": "48G/100G",
+      "ipaddr": "192.168.0.6"
+    },
+    {
+      "type": "Redhat Server",
+      "name": "百岁山",
+      "capacity": "12G/20G",
+      "ipaddr": "192.168.0.5"
+    },
+    {
+      "type": "Ubuntu Server",
+      "name": "安慕希",
+      "capacity": "45G/100G",
+      "ipaddr": "192.168.0.4"
+    },
+    {
+      "type": "Ubuntu",
+      "name": "伊利",
+      "capacity": "28.1G/50G",
+      "ipaddr": "192.168.0.3"
+    },
+    {
+      "type": "Windows Server",
+      "name": "蒙牛",
+      "capacity": "34.8G/100G",
+      "ipaddr": "192.168.0.2"
+    }
+  ]
+}

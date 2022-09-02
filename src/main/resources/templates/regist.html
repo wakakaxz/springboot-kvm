@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="layui/layui.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+    <style>
+
+        @font-face {
+            font-family: 'aliregu';
+            src: url('font/Alibaba-PuHuiTi-Regular.ttf');
+            src: url('font/Alibaba-PuHuiTi-Regular.otf') format('truetype'),
+            url('font/Alibaba-PuHuiTi-Regular.eot') format('embedded-opentype'),
+            url('font/Alibaba-PuHuiTi-Regular.woff') format('woff'),
+            url('font/Alibaba-PuHuiTi-Regular.svg') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            font-family: "aliregu", sans-serif;
+        }
+
+        .myinput{
+            width: 30%;
+            display: inline-block;
+            height: 38px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #e6e6e6;
+            border-radius: 2px;
+            padding-left: 10px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form">
+    <br>
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-inline">
+            <input id="email" type="text" name="title" required lay-verify="required" placeholder="请输入邮箱" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-inline">
+            <input id="name" type="text" name="title" required lay-verify="required" placeholder="请输入用户名" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input id="password" type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="input_emailcode" class="layui-form-label" >验证码</label>
+        <div class="layui-input-inline">
+            <input type="text" id="input_emailcode" name="input_emailcode" required
+                   placeholder="邮箱验证码"
+                   autocomplete="off" class="myinput">
+            <button id="getvercode" class="layui-btn layui-btn-normal">获取验证码</button>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">国家</label>
+        <div class="layui-input-inline">
+            <select id="country" name="city" lay-verify="required">
+                <option value=""></option>
+                <option value="0">中国</option>
+                <option value="1">美国</option>
+                <option value="2">英国</option>
+                <option value="3">法国</option>
+                <option value="4">德国</option>
+                <option value="5">日本</option>
+                <option value="6">印度</option>
+                <option value="7">俄罗斯</option>
+                <option value="8">.....</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">用途</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="use" title="商用">
+            <input type="checkbox" name="use" title="教育" checked>
+            <input type="checkbox" name="use" title="个人">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="sex" value="男" title="男">
+            <input type="radio" name="sex" value="女" title="女" checked>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><b style="color: red">*</b></label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="agree" title="同意使用协议" lay-skin="primary" checked>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="submit" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //Demo
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+
+        //监听提交
+       /* form.on('submit(formDemo)', function (data) {
+        });*/
+    });
+    /**
+     * 注册操作Start
+     * */
+        // 邮箱验证码
+    var emailVerCode;
+    $("#getvercode").on('click', function () {
+        var email = $("#email");
+        // language=JSRegexp
+        var reg = new RegExp(/^([A-Za-z0-9_\-\.])+\@(163.com|qq.com)$/);
+        var obj = email.val();
+        if (obj === '') { //输入不能为空
+            layer.msg('邮箱地址为空', {icon: 5});
+            return false;
+        } else if (!reg.test(obj)) {
+            layer.msg('不是正确邮箱地址', {icon: 2});
+            return false;
+        }
+
+        $.post("/sendEmail", {
+            email: obj
+        }, function (data) {
+            emailVerCode = data;
+            console.log('邮箱验证码测试 : ' + emailVerCode);
+            layer.msg('验证码已发送至您的邮箱', {icon: 1});
+        });
+
+
+        var seconds = 59;
+        var code = $(this);
+        code.removeClass("layui-btn-normal");
+        code.attr("disabled", "");
+        code.addClass("layui-btn-disabled");
+
+        var t = setInterval(function () {
+            if (seconds === 0) {
+                code.addClass("layui-btn-normal");
+                code.removeClass("layui-btn-disabled");
+                code.removeAttr("disabled");
+
+                code.html("再次发送");
+                clearInterval(t);
+            } else if (seconds < 10) {
+                code.html("还剩余0" + seconds + "秒");
+            } else {
+                code.html("还剩余" + seconds + "秒");
+            }
+            seconds--;
+        }, 1000);
+    });
+
+    $('#submit').on('click', function () {
+        var email = $("#email"),
+            password = $("#password"),
+            name = $('#name'),
+            input_emailcode = $("#input_emailcode"),
+            country = $("#country"),
+            use = $("input[name='use']:checked"),
+            sex = $("input[name='sex']:checked"),
+            agree = $("input[name='agree']:checked");
+        // repassword = $("#repassword");
+
+        if (email.val() === '') {
+            layer.msg('邮箱地址为空', {icon: 5});
+            email.focus();
+            return false;
+        }
+        if (name.val() === '') {
+            layer.msg('用户名为空', {icon: 5});
+            name.focus();
+            return false;
+        }
+        if (input_emailcode.val() === '') {
+            layer.msg('验证码为空', {icon: 5});
+            input_emailcode.focus();
+            return false;
+        }
+
+        if (use.val() === undefined) {
+            layer.msg('用途为空', {icon: 5});
+            use.focus();
+            return false;
+        }
+        if (password.val() === '') {
+            layer.msg('密码为空', {icon: 5});
+            password.focus();
+            return false;
+        }
+        if (password.val().length < 6) {
+            layer.msg('密码不少于6位', {icon: 5});
+            password.focus();
+            return false;
+        }
+        if (agree.val() === undefined) {
+            layer.msg('请先同意协议', {icon: 5});
+            // password.focus();
+            return false;
+        }
+        $.post("/saveUser", {
+            email: email.val(),
+            username: name.val(),
+            // country: country.val(),
+            // use: parseInt(use.val()),
+            // sex: sex.val(),
+            password: password.val(),
+            flag: 1
+        }, function (data) {
+            console.log(data);
+            if (data === false) {
+                console.log('false');
+                layer.msg('该账户已存在', {icon: 2});
+                // window.location.href = "regist.html"
+            } else if (data === true) {
+                console.log('true');
+                layer.msg('注册成功! 跳转登陆界面...', {
+                    icon: 1,
+                    time: 1000 //如果不配置，默认是3秒
+                }, function () {
+                    console.log('true->fun');
+                    window.parent.layer.closeAll();
+                    // window.location.href = "/main";
+                });
+            } else {
+                console.log('else');
+                layer.alert('ERROR', {icon: 5});
+            }
+        });
+    });
+    /**
+     * 注册操作End
+     * */
+</script>
+</body>
+</html>
